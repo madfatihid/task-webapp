@@ -81,7 +81,7 @@ exports.register = async (req, res) => {
         await User.create({ username, email, password: hash });
     } catch (e) {
         // reject if email already exists
-        if (e.original.code === "ER_DUP_ENTRY") {
+        if (e.original?.code === "ER_DUP_ENTRY") {
             return res.send({
                 message: "Email already exists",
             }).status(406);

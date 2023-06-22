@@ -4,9 +4,9 @@
 Secure web application using Node.js, Express.js, and Sequelize ORM. The application have user registration, login functionality, and profile updating while ensuring proper user access control.
 ## Usage
 1. git clone
-2. move to newly created directory and create .env file and add these to the file:
+2. move to newly created directory and create `.env` file and add these to the file:
 
-```ruby
+```bash
 DB_CONNECTION=mysql
 DB_HOST=localhost
 DB_PORT=3306
@@ -28,47 +28,142 @@ REFRESH_TOKEN_SECRET=6f656bb1ac524f51d178992bf510fadbde88fea0dbe0a0a48e2a297f043
 10. use`/auth/login` to access again
 ## Libraries and Stacks Used
 
--- **Node.js**
--- **Express.js**
--- **Sequelize ORM**
--- **mysql2** (for accessing MySQL database)
--- **dotenv** (for accessing environment variables)
--- **body-parser** (for parsing requests)
--- **cookie-parser** (for parsing cookies)
--- **express-jwt** (for parsing jwt tokens)
--- **jsonwebtoken** (for creating jwt tokens for authorizations)
--- **cors** (for preventing cross-origin resource sharing)
--- **bcrypt** (for hashing passwords)
--- **express-rate-limit** (for blocking DDOS and brute force attacks)
+- **Node.js**
+- **Express.js**
+- **Sequelize ORM**
+- **mysql2** (for accessing MySQL database)
+- **dotenv** (for accessing environment variables)
+- **body-parser** (for parsing requests)
+- **cookie-parser** (for parsing cookies)
+- **express-jwt** (for parsing jwt tokens)
+- **jsonwebtoken** (for creating jwt tokens for authorizations)
+- **cors** (for preventing cross-origin resource sharing)
+- **bcrypt** (for hashing passwords)
+- **express-rate-limit** (for blocking DDOS and brute force attacks)
 
 ## Endpoints
 There are 6 endpoints in this application.
-### **POST**  `/auth/register`
-Used for creating a new account.
-#### Parameters
-- `username` string **Required** - only alphanumeric, length from 3 to 32.
-- `email` string **Required**
-- `password` string **Required** - password must be at least 6 characters, must contain at least 1 number and 1 special character.
-#### Response
-- `accessToken` string 
-### **POST** `/auth/login`
-Used for logging in into an existing  account.
-#### Parameters
-- `email` string **Required**
-- `password` string **Required**
-#### Response
-- `accessToken` string 
-### **POST** `/auth/refresh`
-Used for refreshing access token. Refresh token will be acceded from the cookie.
-### **POST** `/auth/logout`
-Used for logging out.
-### **GET** `/profile`
-Used for viewing the current logged in user profile.
-#### Headers
-- `Bearer` string **Required** - access token
-### **POST** `/profile`
-Used for editing/updating the profile username
-#### Headers
-- `Bearer` string **Required** - access token
-#### Parameters
-- `password` string **Required**
+
+### Authentication
+
+<details>
+ <summary><code>POST</code> <code><b>/auth/register</b></code> <code>(Used for creating a new account.)</code></summary>
+
+##### Parameters
+
+> | name      |  type     | data type               | description                                                           |
+> |-----------|-----------|-------------------------|-----------------------------------------------------------------------|
+> | username      |  required | String   | only alphanumeric, length from 3 to 32.  |
+> | email      |  required | String   | N/A  |
+> | password      |  required | String   | password must be at least 6 characters, must contain at least 1 alphabet, 1 number and 1 special character. 32 characters max.  |
+
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `201`         | `application/json`        | `{"accessToken": "eyJhbGciO..."}`                                |
+> | `406`         | `text/html;charset=utf-8`                | `Password not strong enough`                            |    
+> | `406`         | `text/html;charset=utf-8`        | `Not Acceptable`                                |   
+> | `406`         | `text/html;charset=utf-8`         | `Email already exists`                                                                |
+> 
+</details>
+<details>
+ <summary><code>POST</code> <code><b>/auth/login</b></code> <code>(Used for logging in into an existing  account.)</code></summary>
+
+##### Parameters
+
+> | name      |  type     | data type               | description                                                           |
+> |-----------|-----------|-------------------------|-----------------------------------------------------------------------|
+> | email      |  required | String   | N/A  |
+> | password      |  required | String   | N/A  |
+
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `201`         | `application/json`        | `{"accessToken": "eyJhbGciO..."}`                                |
+> | `406`         | `text/html;charset=utf-8`                | `Email or password is incorrect`                            |
+> 
+</details>
+<details>
+ <summary><code>POST</code> <code><b>/auth/refresh</b></code> <code>(Used for refreshing access token. Refresh token will be acceded from the cookie.)</code></summary>
+
+##### Parameters
+
+> None
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `201`         | `application/json`        | `{"accessToken": "eyJhbGciO..."}`                                |
+> | `406`         | `text/html;charset=utf-8`                | `Unauthorized`                            |
+> 
+</details>
+<details>
+ <summary><code>POST</code> <code><b>/auth/logout</b></code> <code>(Used for logging out.)</code></summary>
+
+##### Parameters
+
+> None
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `200`         | `text/html;charset=utf-8`        | `OK`                                |
+> | `406`         | `text/html;charset=utf-8`                | `Unauthorized`                            |
+> 
+</details>
+
+### Profile
+<details>
+ <summary><code>GET</code> <code><b>/profile</b></code> <code>(Used for viewing the current logged in user profile.)</code></summary>
+
+##### Headers
+
+> | key     | value                      | description                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `Authorization`         | `Bearer eyJhbGciOiJ...`        | `access token`                                |
+> 
+
+##### Parameters
+
+> None
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `200`         | `application/json`        | `{"username": "hello", "email": "hello@hello.com"}`                                |
+> | `406`         | `text/html;charset=utf-8`                | `Unauthorized`                            |
+> 
+</details>
+<details>
+ <summary><code>POST</code> <code><b>/profile</b></code> <code>(Used for editing/updating the current logged in profile username.)</code></summary>
+
+##### Headers
+
+> | key     | value                      | description                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `Authorization`         | `Bearer eyJhbGciOiJ...`        | `access token`                                |
+> 
+
+##### Parameters
+
+> | name      |  type     | data type               | description                                                           |
+> |-----------|-----------|-------------------------|-----------------------------------------------------------------------|
+> | username      |  required | String   | only alphanumeric, length from 3 to 32.  |
+> 
+
+##### Responses
+
+> | http code     | content-type                      | response                                                            |
+> |---------------|-----------------------------------|---------------------------------------------------------------------|
+> | `200`         | `text/html;charset=utf-8`        | `OK`                                |                 
+> | `406`         | `text/html;charset=utf-8`        | `Not Acceptable`                                |                 
+> | `406`         | `text/html;charset=utf-8`                | `Unauthorized`                            |
+> 
+</details>

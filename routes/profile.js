@@ -36,7 +36,11 @@ exports.post = async (req, res) => {
         username
     });
 
-    await user.save();
+    try {
+        await user.save();
+    } catch (e) {
+        return res.sendStatus(406);
+    }
 
     return res.sendStatus(200);
 };
